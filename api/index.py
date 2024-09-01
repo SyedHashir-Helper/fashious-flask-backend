@@ -7,9 +7,7 @@ import os
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5173"], "supports_credentials": True,
-                            "methods": ["GET", "POST"]
-                            }})
+CORS(app, resources={r"/*": {"origins": "*"})
 
 # Define your API tokens here
 REPLICATE_API_TOKEN =  os.getenv("REPLICATE_API_TOKEN")
