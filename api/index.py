@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 import replicate
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import json
 import os
 
