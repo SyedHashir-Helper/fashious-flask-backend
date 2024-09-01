@@ -7,15 +7,9 @@ import os
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-@app.after_request
-def after_request(response):
-    # Add the Access-Control-Allow-Origin header explicitly
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    return response
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173"], "supports_credentials": True,
+                            "methods": ["GET", "POST"]
+                            }})
 
 # Define your API tokens here
 REPLICATE_API_TOKEN =  os.getenv("REPLICATE_API_TOKEN")
