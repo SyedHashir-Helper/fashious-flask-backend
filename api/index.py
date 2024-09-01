@@ -17,6 +17,10 @@ CORS(app, resources={
 BRIA_API_TOKEN = '568187d58ec14982b5959c71c48fda74'
 REPLICATE_API_TOKEN = 'r8_XtM5nuur66PdgoZkRnxZ5M45vaZcUUW3okLjY'
 
+@app.route('/', methods=['GET'])
+def hello_world():
+    return 'Hello, World!'
+
 @app.route('/api/replace_background', methods=['POST'])
 def replace_background():
     data = request.json
