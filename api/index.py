@@ -7,19 +7,19 @@ import os
 
 app = Flask(__name__)
 
-CORS(app, support_credentials=True)
+CORS(app)
 
 # Define your API tokens here
 REPLICATE_API_TOKEN =  os.getenv("REPLICATE_API_TOKEN")
 PIXELCUT_API = os.getenv("PIXELCUT_API")
 PICSART_API = os.getenv("PICSART_API")
 
+
 @app.route('/', methods=['GET'])
 def hello_world():
     return 'Hello, World!'
 
 @app.route('/api/transform_image', methods=['POST'])
-@cross_origin(supports_credentials=True)
 def transform_image():
 
     data = request.json
@@ -29,7 +29,7 @@ def transform_image():
     if not model_image_url or not garment_image_url:
         return jsonify({'error': 'model_image_url and garment_image_url are required'}), 400
     
-    client = replicate.Client(api_token=os.getenv('REPLICATE_API_TOKEN'))
+    client = replicate.Client(api_token=REPLICATE_API_TOKEN)
     
     try:
         output = client.run(
@@ -48,7 +48,6 @@ def transform_image():
 
 
 @app.route('/api/backgeneratorpic', methods=['POST'])
-@cross_origin(supports_credentials=True)
 def remove_bg():
     # Get data from the request
     data = request.json
@@ -82,7 +81,6 @@ def remove_bg():
 
 
 @app.route('/api/generate-background', methods=['POST'])
-@cross_origin(supports_credentials=True)
 def generate_background():
     # Get data from the request
     data = request.json
