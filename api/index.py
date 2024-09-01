@@ -15,7 +15,7 @@ CORS(app, resources={
 })
 
 # Define your API tokens here
-app.config['REPLICATE_API_KEY'] = os.getenv('REPLICATE_API_KEY')
+# app.config['REPLICATE_API_KEY'] = os.getenv('REPLICATE_API_KEY')
 
 @app.route('/', methods=['GET'])
 def hello_world():
@@ -60,7 +60,7 @@ def transform_image():
     if not model_image_url or not garment_image_url:
         return jsonify({'error': 'model_image_url and garment_image_url are required'}), 400
     
-    client = replicate.Client(api_token=REPLICATE_API_TOKEN)
+    client = replicate.Client(api_token=os.getenv('REPLICATE_API_TOKEN'))
     
     try:
         output = client.run(
