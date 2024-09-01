@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import replicate
 from flask_cors import CORS
+import json
 import os
 
 app = Flask(__name__)
@@ -15,40 +16,13 @@ CORS(app, resources={
 })
 
 # Define your API tokens here
-# app.config['REPLICATE_API_KEY'] = os.getenv('REPLICATE_API_KEY')
+REPLICATE_API_TOKEN =  os.getenv("REPLICATE_API_TOKEN")
+PIXELCUT_API = os.getenv("PIXELCUT_API")
+PICSART_API = os.getenv("PICSART_API")
 
 @app.route('/', methods=['GET'])
 def hello_world():
     return 'Hello, World!'
-
-@app.route('/api/replace_background', methods=['POST'])
-def replace_background():
-    data = request.json
-    bg_prompt = data.get('bg_prompt')
-    image_url = data.get('image_url')
-    
-    if not bg_prompt or not image_url:
-        return jsonify({'error': 'bg_prompt and image_url are required'}), 400
-    
-    url = "https://engine.prod.bria-api.com/v1/background/replace"
-    payload = {
-        "bg_prompt": bg_prompt,
-        "num_results": 2,
-        "sync": True,
-        "image_url": image_url
-    }
-    headers = {
-        "Content-Type": "application/json",
-        "api_token": BRIA_API_TOKEN
-    }
-    
-    response = requests.post(url, json=payload, headers=headers)
-    
-    if response.status_code != 200:
-        return jsonify({'error': 'Failed to replace background', 'details': response.text}), response.status_code
-    
-    data = response.json()
-    return jsonify(data)
 
 @app.route('/api/transform_image', methods=['POST'])
 def transform_image():
@@ -76,6 +50,71 @@ def transform_image():
         return jsonify(output)
     except Exception as e:
         return jsonify({'error': 'Failed to transform image', 'details': str(e)}), 500
+
+
+@app.route('/api/backgeneratorpic', methods=['POST'])
+def remove_bg():
+    # Get data from the request
+    data = request.json
+    image_url = data.get('image_url')
+    color = data.get('color')
+    
+    # Define the API URL and headers
+    url = "https://api.picsart.io/tools/1.0/removebg"
+    payload = {
+        "output_type": "cutout",
+        "bg_blur": "10",
+        "scale": "fit",
+        "auto_center": "false",
+        "stroke_size": "0",
+        "stroke_color": "FFFFFF",
+        "stroke_opacity": "100",
+        "format": "JPG",
+        "image_url": image_url,
+        "bg_color": color
+    }
+    headers = {
+        "accept": "application/json",
+        "X-Picsart-API-Key": PICSART_API  # Replace with your actual API key
+    }
+
+    # Make the POST request
+    response = requests.post(url, data=payload, headers=headers)
+    
+    # Return the response from the API
+    return jsonify(response.json())
+
+
+@app.route('/api/generate-background', methods=['POST'])
+def generate_background():
+    # Get data from the request
+    data = request.json
+    image_url = data.get('image_url')
+    prompt = data.get('prompt')
+
+    # Define the API URL and headers
+    url = "https://api.developer.pixelcut.ai/v1/generate-background"
+    payload = json.dumps({
+        "image_url": image_url,
+        "image_transform": {
+            "scale": 1,
+            "x_center": 0.5,
+            "y_center": 0.5
+        },
+        "scene": "",
+        "prompt": prompt,
+        "negative_prompt": ""
+    })
+    headers = {
+        'Content-Type': 'application/json',
+        'X-API-KEY': PIXELCUT_API  # Replace with your actual API key
+    }
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, data=payload)
+    
+    # Return the response from the API
+    return jsonify(response.json())
 
 if __name__ == '__main__':
     app.run(debug=True)
