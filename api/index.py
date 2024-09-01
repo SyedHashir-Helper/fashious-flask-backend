@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import replicate
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 
@@ -14,8 +15,7 @@ CORS(app, resources={
 })
 
 # Define your API tokens here
-BRIA_API_TOKEN = '568187d58ec14982b5959c71c48fda74'
-REPLICATE_API_TOKEN = 'r8_XtM5nuur66PdgoZkRnxZ5M45vaZcUUW3okLjY'
+app.config['REPLICATE_API_KEY'] = os.getenv('REPLICATE_API_KEY')
 
 @app.route('/', methods=['GET'])
 def hello_world():
