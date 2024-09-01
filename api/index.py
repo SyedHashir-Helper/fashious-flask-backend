@@ -6,7 +6,6 @@ import json
 import os
 
 app = Flask(__name__)
-https://fashious-genai-hashir.netlify.app
 
 CORS(app, resources={
     r"/api/*": {
