@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/api/*": {"origins": "*"})
+CORS(app, resources={r"/api/*": {"origins": "*"}, support_credentials=True)
 
 # Define your API tokens here
 REPLICATE_API_TOKEN =  os.getenv("REPLICATE_API_TOKEN")
@@ -19,6 +19,7 @@ def hello_world():
     return 'Hello, World!'
 
 @app.route('/api/transform_image', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def transform_image():
 
     data = request.json
@@ -47,6 +48,7 @@ def transform_image():
 
 
 @app.route('/api/backgeneratorpic', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def remove_bg():
     # Get data from the request
     data = request.json
@@ -80,6 +82,7 @@ def remove_bg():
 
 
 @app.route('/api/generate-background', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def generate_background():
     # Get data from the request
     data = request.json
